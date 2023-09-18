@@ -4,9 +4,10 @@ import { Repository } from 'typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 
 import { Product } from './entities/product.entity';
-import { PaginationDto } from '../common/dtos/pagination.dto';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class ProductsService {
@@ -28,7 +29,7 @@ async create(createProductDto: CreateProductDto) {
       //   .toLowerCase()
       //   .replaceAll(' ','_')
       //   .replaceAll("'",'');
-      // }else {
+      // } else {
       //   createProductDto.slug = createProductDto.slug
       //   .toLowerCase()
       //   .replaceAll(' ','_')
@@ -55,14 +56,44 @@ async create(createProductDto: CreateProductDto) {
     )
   }
 
-  async findOne(id: string) {
-    const product = await this.productRepository.findOneBy({id});
-    if(!product) throw new NotFoundException(`Product with id ${id} not found`);
+  async findOne( terminoDeBusqueda: string) {
+
+    let product:Product;
+
+    if ( isUUID(terminoDeBusqueda) ){
+      product = await this.productRepository.findOneBy( { id: terminoDeBusqueda } );
+    } else {
+      // product = await this.productRepository.findOneBy({ slug: terminoDeBusqueda });
+     const queryBuider = this.productRepository.createQueryBuilder();
+     product = await queryBuider
+      .where(`UPPER(title) =:title or slug =:slug`,{
+        title: terminoDeBusqueda.toUpperCase(),
+        slug: terminoDeBusqueda.toLowerCase()
+      }).getOne();
+     
+    }
+
+    // const product = await this.productRepository.findOneBy({id});
+    if(!product) throw new NotFoundException(`Product with  ${terminoDeBusqueda} not found`);
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+
+    const product = await this.productRepository.preload({
+      id:id,
+      ...updateProductDto
+    });
+
+    if(!product) throw new NotFoundException(`Product with id: ${ id } not found`)
+
+    try {
+      await this.productRepository.save( product );
+      return  product;
+      
+    } catch (error) {
+      this.hadleDBException(error);
+    }
   }
 
   async remove(id: string) {
