@@ -15,7 +15,7 @@ $ yarn install
 ```bash
 $ docker-compose up -d
 ```
-6. Levantar la aplicacion en desarroll
+6. Levantar la aplicacion en desarrollo
 ```bash
 $ yarn start:dev
 ```
