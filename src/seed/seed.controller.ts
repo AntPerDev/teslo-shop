@@ -10,4 +10,5 @@ export class SeedController {
     return this.seedService.runSeed();
   }
 
+  
 }
