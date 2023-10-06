@@ -15,10 +15,10 @@ $ yarn install
 ```bash
 $ docker-compose up -d
 ```
-6. Ejecutar SEED
-```http://localhost:3000/api/seed```
-
-7. Levantar la aplicacion en desarrollo
+6. Levantar la aplicacion en desarrollo
 ```bash
 $ yarn start:dev
 ```
+
+7. Ejecutar SEED
+```http://localhost:3000/api/seed```
