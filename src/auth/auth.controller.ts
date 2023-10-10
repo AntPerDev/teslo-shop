@@ -4,7 +4,7 @@ import { IncomingHttpHeaders } from 'http';
 
 
 import { AuthService } from './auth.service';
-import { GetUser, RawHeader } from './decorators';
+import { Auth, GetUser, RawHeader } from './decorators';
 import { RoleProtected } from './decorators/role-protected.decorator';
 
 import { CreateUserDto, LoginUserDto } from './dto';
@@ -24,6 +24,15 @@ export class AuthController {
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(
+    @GetUser() user: User
+  ){
+    return this.authService.checkAuthStatus( user );
   }
 
   @Get('private')
@@ -57,6 +66,19 @@ export class AuthController {
   @RoleProtected( ValidRoles.superUser, ValidRoles.admin, ValidRoles.user)
   @UseGuards( AuthGuard() , UserRoleGuard )
   privateRoute2(
+    @GetUser() user: User
+  ) {
+
+    return {
+      ok: true,
+      user
+    }
+  }
+
+
+  @Get('private3')
+  @Auth( ValidRoles.superUser )
+  privateRoute3(
     @GetUser() user: User
   ) {
 

@@ -32,7 +32,7 @@ export class AuthService {
         password: bcrypt.hashSync(password, 10)
       });
 
-      await this.userRepository.save( user );
+      await this.userRepository.save(user);
 
       delete user.password;
       // para no retornar el password hacia la salida de datos para no mostrarlo
@@ -54,7 +54,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true, id:true} //! OJO!
+      select: { email: true, password: true, id: true } //! OJO!
     })
 
     if (!user) {
@@ -69,15 +69,24 @@ export class AuthService {
 
     return {
       ...user,
-      token: this.getJwtToken({ 
-        id: user.id })
+      token: this.getJwtToken({
+        id: user.id
+      })
     };
-    
+
   }
 
+  async checkAuthStatus(user: User) {
+    return {
+      ...user,
+      token: this.getJwtToken({
+        id: user.id
+      })
+    };
+  }
 
-  private getJwtToken( payload: JWtPayload ){
-    const token = this.jwtService.sign( payload );
+  private getJwtToken(payload: JWtPayload) {
+    const token = this.jwtService.sign(payload);
     return token;
   }
 

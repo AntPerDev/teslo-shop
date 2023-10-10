@@ -1,9 +1,9 @@
 
-import { ExecutionContext, InternalServerErrorException, createParamDecorator } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext,  InternalServerErrorException } from "@nestjs/common";
 
 
 export const RawHeader = createParamDecorator(
-    (data, ctx: ExecutionContext) => {
+    (data:string, ctx: ExecutionContext) => {
 
         // console.log({data})
         const req = ctx.switchToHttp().getRequest();
