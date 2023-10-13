@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, UseGuards, Req, Headers, SetMetadata } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { IncomingHttpHeaders } from 'http';
 
@@ -12,6 +13,7 @@ import { User } from './entities/user.entity';
 import { UserRoleGuard } from './guards/user-role.guard';
 import { ValidRoles } from './interfaces';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -31,8 +33,8 @@ export class AuthController {
   @Auth()
   checkAuthStatus(
     @GetUser() user: User
-  ){
-    return this.authService.checkAuthStatus( user );
+  ) {
+    return this.authService.checkAuthStatus(user);
   }
 
   @Get('private')
@@ -63,8 +65,8 @@ export class AuthController {
   // @SetMetadata('roles', ['admin', 'super-user'])
 
   @Get('private2')
-  @RoleProtected( ValidRoles.superUser, ValidRoles.admin, ValidRoles.user)
-  @UseGuards( AuthGuard() , UserRoleGuard )
+  @RoleProtected(ValidRoles.superUser, ValidRoles.admin, ValidRoles.user)
+  @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoute2(
     @GetUser() user: User
   ) {
@@ -77,7 +79,7 @@ export class AuthController {
 
 
   @Get('private3')
-  @Auth( ValidRoles.superUser )
+  @Auth(ValidRoles.superUser)
   privateRoute3(
     @GetUser() user: User
   ) {
