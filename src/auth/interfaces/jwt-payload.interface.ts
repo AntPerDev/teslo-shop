@@ -1,6 +1,6 @@
 
 
-export interface JWtPayload {
+export interface JwtPayload {
 
     id: string;
 
